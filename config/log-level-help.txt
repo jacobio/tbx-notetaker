@@ -1,0 +1,9 @@
+# Log Level
+
+This config file specifies the log level used when writing logs to this Tinderbox persistent log file. Allowed log levels are:
+
+1. `INFO`: all log messages will be written to the file
+2. `WARN`: warnings and errors only
+3. `ERROR`: only error messages
+
+The log level string is case insensitive. Change the `$MyString` attribute on this note.

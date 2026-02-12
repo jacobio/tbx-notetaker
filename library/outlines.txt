@@ -1,0 +1,168 @@
+//
+//
+//
+function promptLLMWithOutlineItem(anote) {
+    //logInfo("prompt=" + exportedString(this, "/LLM Prompts/Tell me more about..."));
+
+    var:string response = promptClaude(exportedString(anote, "/LLM Prompts/Tell me more about..."));
+    response = response.replace("```json", "");
+    response = response.replace("```", "");
+
+    //logInfo("response=" + response);
+
+    if (response) {
+        $Text(anote) = response.json["content"];
+        $LLMConfidence(anote) = response.json["confidence"];
+        $LLMSearchedWeb(anote) = response.json["searched"];
+        $LLMSources(anote) = response.json["sources"];
+    }
+    $Tags(anote) += "AI Response";
+
+    return anote;
+}
+
+//
+//
+//
+function fCodify(n:number) {
+   var:list vCodes=[A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z];
+   return vCodes[n-1];
+}
+
+//
+//
+//
+function baseDepth(anote) {
+    var:number depth = 0;
+    collect(ancestors, $Path(anote)).each(ancestor){
+        if($Prototype(anc) != $Prototype(anote)) {
+            return $OutlineDepth(ancestor);
+        }
+    }
+
+    return depth;
+}
+
+//
+//
+//
+function highestSubling(anote) {
+   var:string highest = anote;
+   collect(siblings(anote), $Path).reverse.each(sibling) {
+      if($Prototype(sibling) == $Prototype(anote)) {
+         highest = sibling;
+      }
+   }
+
+   return highest;
+}
+
+//
+//
+//
+function highestAncestor(anote) {
+   var:string highest = $Path(anote);
+   collect(ancestors(anote), $Path).each(ancestor) {
+      if($Prototype(ancestor) == $Prototype(anote)) {
+         highest = ancestor;
+      }
+   }
+
+   return highest;
+}
+
+//
+//
+//
+function performOutlineAILookup(alias, anote) {
+    // Disable display expressions as they are wrong
+    //
+    // NOTE: this is an intrinsic property
+    $DisplayExpressionDisabled(alias) = true;
+
+    // Determine where the outline starts
+    var:string highestAncestor = highestAncestor(anote);
+
+    logInfo("performOutlineAILookup() anote=[" + $Name(anote) + "] highestAncestor=[" + highestAncestor + "] depth=[" + $OutlineDepth(highestAncestor) + "]");
+
+    // Remove tag and hour glass
+    $Flags(anote) -= "⏳.gray";
+    $Tags(anote) -= "AI Lookup";
+}
+
+//
+//
+//
+function mdOutlineDesignator(anote) {
+    // Determine where the outline starts
+    var:number depth = outlineDepth(anote);
+
+    // Apply Markdown-style outline depth:
+    var:string spaces = "                                    "
+                      .substr(0, (depth - 1) * 4);
+
+    return spaces + "- " + $OutlineDesignator;
+}
+
+//
+//
+//
+function outlineDepth(anote) {
+    // Determine where the outline starts
+    var:string highestAncestor = highestAncestor(anote);
+
+    // Calculate the offset
+    var:number offsetDepth = $OutlineDepth(highestAncestor);
+
+    // Return the "true" depth for numbering
+    return $OutlineDepth(anote) - offsetDepth + 1;
+}
+
+//
+//
+//
+function outlineDesignator(anote) {
+    if ($IsPrototype == false & $IsAlias == false) {
+        // Determine where the outline starts
+        var:number depth = outlineDepth(anote);
+
+        if(depth == 1) {
+            $NameBold(anote) = true;
+            $OutlineNameSize(anote) = 110;
+        }
+        else {
+            $NameBold(anote) =;
+            $OutlineNameSize(anote) =;
+        }
+        return designatorForDepth(depth, $SiblingOrder(anote));
+    }
+    else {
+        return "";
+    }
+}
+
+
+//
+// Outline Depth
+//
+function designatorForDepth(outlineDepth:number, outlineOrder:number) {
+   if(outlineDepth == 1) {
+      return outlineOrder.format("X") + ".";
+   };
+   if(outlineDepth == 2){
+      return fCodify(outlineOrder) + ".";
+   };
+   if(outlineDepth == 3){
+      return outlineOrder + ".";
+   };
+   if(outlineDepth == 4){
+      return fCodify(outlineOrder).lowercase + ")";
+   };
+   if(outlineDepth == 5){
+      return "("+ outlineOrder + ")";
+   };
+   if(outlineDepth == 6){
+      return "(" + fCodify(outlineOrder).lowercase + ")";
+   };
+   return "";
+}

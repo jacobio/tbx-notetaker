@@ -1,0 +1,7 @@
+$Flags -= "🤖.gray";
+$Flags += "⏳.gray";
+
+promptLLMWithOutlineItem(this);
+
+$Flags -= "⏳.gray";
+$Flags += "🤖.gray";

@@ -1,0 +1,52 @@
+////
+// This note contains functions that facilitate writing log statements
+// to a persistent, chronological log note in this Tinderbox file.
+//
+// The log is located in "/Config/Log". The "log level" is set in the
+// "/Config/Log Level" $MyString attribute.
+////
+
+//
+// Truncates the contents of the log file
+//
+function logTruncate() {
+    $Text("/Config/Log") =;
+}
+
+//
+// Writes an INFO statement to the log file
+//
+// Note: Tinderboxe's defined, named colors can be found here.
+//
+function logInfo(msg) {
+    if ($MyString("/Config/Log Level").uppercase == "INFO") {
+        $Text("/Config/Log") +=
+            (now() + " INFO  " + msg + "\n").textColor("dark bright blue");
+    }
+}
+
+//
+// Writes a WARN statement to the log file
+//
+function logWarn(msg) {
+    if ($MyString("/Config/Log Level").uppercase == "INFO" |
+        $MyString("/Config/Log Level").uppercase == "WARN")
+    {
+        $Text("/Config/Log") +=
+            (now() + " WARN  " + msg + "\n").textColor("dark orange");
+    }
+}
+
+//
+// Writes an ERROR statement to the log file,
+// and displays the provided error message to the user
+// if one is provided.
+//
+function logError(msg, displayMsg) {
+    $Text("/Config/Log") +=
+        (now() + " ERROR " + msg + "\n").textColor("dark bright red");
+
+    if (displayMsg) {
+        show("⚠️ " + displayMsg, "dark bright red", "white");
+    }
+}

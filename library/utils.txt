@@ -1,0 +1,28 @@
+//
+// Returns a "now" timestamp string in the
+// ISO 8601 date format (e.g., 2023-04-29T14:32:18+05:00)
+//
+function now() {
+    return date("today").format("=");
+}
+
+//
+// Returns the POSIX directory in which this TBX
+// file is located.
+//
+// NOTE: If the document's path contains special RegEx
+// chars, this function may fail.
+//
+function getDir() {
+   return document["path"].replace("/" + document["name"]);
+}
+
+//
+// Runs a given command, but first sets up the run environment
+// by "sourcing" the user's shell preferences and returns
+// the command's ouput.
+//
+function runMyCommand(cmd, stdin) {
+    return runCommand("source ~/.zprofile ; " + cmd,
+                      stdin, getDir()).trim;
+}

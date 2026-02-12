@@ -1,0 +1,27 @@
+I captured the following term/concept during a meeting or lecture and want to understand it better:
+
+**Topic:** ^value($Name)^
+
+**Context from my notes (optional):**
+^action(var:string highest = highestSubling(highestAncestor(original));)^
+^value(exportedString($Container(highest), "/Templates/Outline (Markdown)"))^
+
+Provide a concise explanation suitable for a margin note or aside. Include:
+- What it is (definition or core idea)
+- Why it matters in this context
+- One or two concrete examples or key details if helpful
+
+Keep it to 1 to 2 sentences. Write for someone who's competent but unfamiliar with this specific topic. Skip preamble.
+
+If the topic is recent (last 12 months), involves specific products/versions, references current events, or is something you're uncertain about, use web search to verify and expand your understanding. When you find authoritative sources, include inline links in the explanation.
+
+Do not use any of the configured MCP servers.
+
+Return your response as valid JSON with this structure, do not wrap the JSON in a fenced code Markdown block:
+
+{
+  "content": "The explanation in Markdown, with inline links where appropriate.",
+  "confidence": "High | Medium | Low",
+  "searched": true | false,
+  "sources": ["https://...", "https://..."]
+}

@@ -1,0 +1,5 @@
+#
+# Claude Code command that uses Max subscription + MCP servers
+#
+
+claude --allowedTools "WebSearch" "WebFetch(domain:*)" --model 'sonnet' -p

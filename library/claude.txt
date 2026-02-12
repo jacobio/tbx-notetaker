@@ -1,0 +1,6 @@
+//
+// Prompts Claude using the provided text.
+//
+function promptClaude(text) {
+    return runMyCommand($Text("/Config/Claude Command"), text);
+}

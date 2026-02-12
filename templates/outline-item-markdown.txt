@@ -1,0 +1,2 @@
+^value(mdOutlineDesignator(this))^ ^title^
+^children("/Templates/Outline (Markdown)/Outline Item (Markdown)")^

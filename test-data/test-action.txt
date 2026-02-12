@@ -1,0 +1,2 @@
+$Name = "curl-bootstrap-success";
+$Color = "green";

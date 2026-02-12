@@ -1,0 +1,106 @@
+// ============================================================
+// Outline Item + AI Lookup Installer (GitHub)
+// ============================================================
+// This action code installs the Outline Item prototype,
+// AI Lookup stamp, library functions, templates, and config
+// into the current Tinderbox document.
+//
+// All components are fetched from GitHub at install time.
+// ============================================================
+
+var:string B = "https://raw.githubusercontent.com/jacobio/tbx-notetaker/main/";
+
+// --- 1. Create User Attributes ---
+createAttribute("OutlineDesignator", "string");
+createAttribute("LLMConfidence", "string");
+createAttribute("LLMSearchedWeb", "boolean");
+createAttribute("LLMSources", "set");
+
+// --- 2. Create /Config ---
+create("/Config");
+create("/Config/Claude Command");
+$Text("/Config/Claude Command") = runCommand("curl -s " + B + "config/claude-command.txt");
+create("/Config/Log Level");
+$MyString("/Config/Log Level") = "INFO";
+$Text("/Config/Log Level") = runCommand("curl -s " + B + "config/log-level-help.txt");
+create("/Config/Log");
+
+// --- 3. Create Markdown Prototype (conditional) ---
+if($Name("/Prototypes/Markdown") == "") {
+create("/Prototypes/Markdown");
+$IsPrototype("/Prototypes/Markdown") = true;
+$Badge("/Prototypes/Markdown") = runCommand("base64 -D", "8J+Tkw==");
+$SyntaxHighlighting("/Prototypes/Markdown") = "Markdown";
+$HTMLMarkupText("/Prototypes/Markdown") = false;
+$SmartQuotes("/Prototypes/Markdown") = false;
+$QuickListIndent("/Prototypes/Markdown") = 0;
+$QuickListHangingIndent("/Prototypes/Markdown") = 0;
+};
+
+// --- 4. Create LLM Prompt Prototype ---
+create("/Prototypes/LLM Prompt");
+$IsPrototype("/Prototypes/LLM Prompt") = true;
+$Prototype("/Prototypes/LLM Prompt") = "Markdown";
+$Badge("/Prototypes/LLM Prompt") = runCommand("base64 -D", "8J+klg==");
+$KeyAttributes("/Prototypes/LLM Prompt") = "MyString";
+
+// --- 5. Create Outline Item Prototype ---
+create("/Prototypes/Outline Item");
+$IsPrototype("/Prototypes/Outline Item") = true;
+$Prototype("/Prototypes/Outline Item") = "Markdown";
+$Badge("/Prototypes/Outline Item") = runCommand("base64 -D", "4par77iP");
+$Color("/Prototypes/Outline Item") = "0";
+$DisplayExpression("/Prototypes/Outline Item") = runCommand("curl -s " + B + "expressions/display-expression.txt").trim;
+$OnAdd("/Prototypes/Outline Item") = runCommand("curl -s " + B + "expressions/onadd.txt").trim;
+$KeyAttributes("/Prototypes/Outline Item") = "LLMConfidence;LLMSources;LLMSearchedWeb;Tags";
+$NameBold("/Prototypes/Outline Item") = false;
+$OutlineNameSize("/Prototypes/Outline Item") = 110;
+$QuickListIndent("/Prototypes/Outline Item") = 0;
+$QuickListHangingIndent("/Prototypes/Outline Item") = 0;
+
+// --- 6. Create Library Functions ---
+require("Hints");
+create("/Hints/Library/Utils");
+$IsAction("/Hints/Library/Utils") = true;
+$Text("/Hints/Library/Utils") = runCommand("curl -s " + B + "library/utils.txt");
+create("/Hints/Library/Logging");
+$IsAction("/Hints/Library/Logging") = true;
+$Text("/Hints/Library/Logging") = runCommand("curl -s " + B + "library/logging.txt");
+create("/Hints/Library/Claude");
+$IsAction("/Hints/Library/Claude") = true;
+$Text("/Hints/Library/Claude") = runCommand("curl -s " + B + "library/claude.txt");
+create("/Hints/Library/Outlines");
+$IsAction("/Hints/Library/Outlines") = true;
+$Text("/Hints/Library/Outlines") = runCommand("curl -s " + B + "library/outlines.txt");
+
+// Recompile library functions
+update("/Hints/Library/Utils");
+update("/Hints/Library/Logging");
+update("/Hints/Library/Claude");
+update("/Hints/Library/Outlines");
+
+// --- 7. Create LLM Prompt ---
+create("/LLM Prompts/Tell me more about...");
+$Prototype("/LLM Prompts/Tell me more about...") = "LLM Prompt";
+$Text("/LLM Prompts/Tell me more about...") = runCommand("curl -s " + B + "prompts/tell-me-more.txt");
+
+// --- 8. Create Templates ---
+create("/Templates/Outline (Markdown)");
+$IsTemplate("/Templates/Outline (Markdown)") = true;
+$Text("/Templates/Outline (Markdown)") = runCommand("curl -s " + B + "templates/outline-markdown.txt");
+create("/Templates/Outline (Markdown)/Outline Item (Markdown)");
+$IsTemplate("/Templates/Outline (Markdown)/Outline Item (Markdown)") = true;
+$Text("/Templates/Outline (Markdown)/Outline Item (Markdown)") = runCommand("curl -s " + B + "templates/outline-item-markdown.txt");
+
+// --- 9. Create Stamp ---
+create("/Hints/Stamps/AI Lookup");
+$Text("/Hints/Stamps/AI Lookup") = runCommand("curl -s " + B + "stamps/ai-lookup.txt");
+
+// --- 10. Create README ---
+create("/README");
+$SiblingOrder("/README") = 1;
+$Text("/README") = runCommand("curl -s " + B + "readme.txt");
+
+// Done!
+$Name = "Outline Item + AI Lookup (installed)";
+$Checked = true;
